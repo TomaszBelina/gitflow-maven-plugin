@@ -53,7 +53,15 @@ try {
         System.out.println("release expected: " + expected + " actual was:" + actual);
         return false;
     }
-
+    
+    Process exec = Runtime.getRuntime().exec("git --git-dir=" + basedir + "/.git log master develop --oneline --author=<foo@bar>");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+    int lines = 0;
+    while (reader.readLine() != null) lines++;
+    reader.close();
+    if(lines != 3){
+        return false;
+    }
 } catch (Exception e) {
     e.printStackTrace();
     return false;

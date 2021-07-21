@@ -200,7 +200,9 @@ public abstract class AbstractGitFlowMojo extends AbstractMojo {
     @Parameter(defaultValue = "${settings}", readonly = true)
     protected Settings settings;
 
-    
+    /** Overridden commit author */
+    @Parameter(property = "gitlow.author")
+    private String author;
     
     /**
      * Initializes command line executables.
@@ -705,12 +707,18 @@ public abstract class AbstractGitFlowMojo extends AbstractMojo {
 
         if (gpgSignCommit) {
             getLog().info("Committing changes. GPG-signed.");
-
-            executeGitCommand("commit", "-a", "-S", "-m", message);
+            if(StringUtils.isEmpty(author)) {
+                executeGitCommand("commit", "-a", "-S", "-m", message);
+            }else{
+                executeGitCommand("commit", "-a", "-S", "--author=" + author, "-m", message);
+            }
         } else {
             getLog().info("Committing changes.");
-
-            executeGitCommand("commit", "-a", "-m", message);
+            if(StringUtils.isEmpty(author)) {
+                executeGitCommand("commit", "-a", "-m", message);
+            }else{
+                executeGitCommand("commit", "-a", "--author=" + author, "-m", message);
+            }
         }
     }
 
@@ -761,6 +769,9 @@ public abstract class AbstractGitFlowMojo extends AbstractMojo {
         } else {
             getLog().info("Merging '" + branchName + "' branch.");
             executeGitCommand("merge", sign, branchName, msgParam, msg);
+        }
+        if(StringUtils.isNotEmpty(author)){
+            executeGitCommand("commit", sign, "--amend", "--no-edit", "--author=" + author);
         }
     }
 

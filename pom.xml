@@ -197,6 +197,7 @@
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <preBuildHookScript>init</preBuildHookScript>
                             <postBuildHookScript>verify</postBuildHookScript>
+                            <invokerTest>release-it</invokerTest>
                         </configuration>
                         <executions>
                             <execution>
